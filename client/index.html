@@ -1,0 +1,24 @@
+<!DOCTYPE HTML> 
+<html>
+	<head>
+		<title>Tetris</title>
+		<link rel="stylesheet" href="css/app.css" />
+		<script type="text/javascript" src="http://10.1.11.55:1111/socket.io/socket.io.js"></script>
+		<script type="text/javascript" src="js/lib/jquery/jquery.js"></script>
+		<script type="text/javascript" src="js/lib/underscore/underscore.js"></script>
+		<script type="text/javascript" src="js/lib/backbone/backbone.js"></script>
+		<script type="text/javascript" src="js/tetris-canvas.js"></script>
+		<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	</head>
+	<body>
+		<div class="column">
+			<h2>LINES: <span id="lines-count">0</span>
+			<h2>LEVEL: <span id="level">0</span>
+		</div>
+		<div class="column">
+			<canvas id="tetris-canvas"></canvas>
+		</div>
+		<div class="column"></div>
+		<script type="text/javascript" src="js/app.js"></script>
+	</body>
+</html>

@@ -1,0 +1,13 @@
+{
+	"name": "Co-Op-Tetris",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"start": "node app"
+	},
+	"dependencies": {
+		"underscore": "latest",
+		"backbone": "latest",
+		"socket.io": "latest"
+	}
+}
