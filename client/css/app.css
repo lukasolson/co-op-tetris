@@ -29,3 +29,13 @@ body {
 	height: 100%;
 	background-color: #202020;
 }
+
+table.controls {
+	margin: auto;
+	width: 50%;
+	text-align: center;
+}
+
+table.controls td {
+	width: 50%;
+}

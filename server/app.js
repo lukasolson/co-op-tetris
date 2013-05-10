@@ -34,12 +34,12 @@ io.sockets.on("connection", function(socket) {
 	console.log("New player");
 	
 	tetrisGame.addTetronimo();
-	var index = tetrisGame.tetronimoes.length - 1;
+	var index = tetrisGame.tetronimoes.length - 1, local = tetrisGame;
 	
 	socket.emit("init", tetrisGame.toJSON());
 	socket.on("message", function(message) {
 		if (message.indexOf("_") < 0) { // Don't allow access to private methods
-			tetrisGame[message](index);
+			local[message](index);
 		}
 	});
 });
