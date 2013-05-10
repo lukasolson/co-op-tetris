@@ -2,7 +2,8 @@
 	var $canvas = $("#tetris-canvas"),
 		height = $canvas.height(),
 		$linesCount = $("#lines-count"),
-		$level = $("#level");
+		$level = $("#level"),
+		$playersCount = $("#players-count");
 		
 	$canvas
 		.attr("width", height / 2)
@@ -37,9 +38,10 @@
 		if (tetrisCanvas === null) return;
 		
 		tetrisCanvas.tetrisGame = tetrisGame;
+		window.requestAnimationFrame(tetrisCanvas.draw);
+		
 		$linesCount.html(tetrisGame.linesCount);
 		$level.html(tetrisGame.level);
-		window.requestAnimationFrame(tetrisCanvas.draw);
 	});
 	
 	socket.on("change:tetronimo", function(data) {
@@ -47,6 +49,8 @@
 		
 		tetrisCanvas.tetrisGame.tetronimoes[data.index] = data.tetronimo;
 		window.requestAnimationFrame(tetrisCanvas.draw);
+		
+		$playersCount.html(tetrisCanvas.tetrisGame.tetronimoes.length);
 	});
 	
 	socket.on("game-over", function() {
