@@ -9,7 +9,7 @@
 		.attr("height", height)
 		.css("width", (height / 2) + "px");
 		
-	var socket = io.connect("http://10.1.11.55:1111"),
+	var socket = io.connect("http://localhost:1111"),
 		tetrisCanvas = null;
 		
 	socket.on("init", function (tetrisGame) {
@@ -33,12 +33,19 @@
 		});
 	});
 	
-	socket.on("message", function(tetrisGame) {
+	socket.on("change:data", function(tetrisGame) {
 		if (tetrisCanvas === null) return;
 		
 		tetrisCanvas.tetrisGame = tetrisGame;
 		$linesCount.html(tetrisGame.linesCount);
 		$level.html(tetrisGame.level);
+		window.requestAnimationFrame(tetrisCanvas.draw);
+	});
+	
+	socket.on("change:tetronimo", function(data) {
+		if (tetrisCanvas === null) return;
+		
+		tetrisCanvas.tetrisGame.tetronimoes[data.index] = data.tetronimo;
 		window.requestAnimationFrame(tetrisCanvas.draw);
 	});
 	

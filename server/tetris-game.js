@@ -8,7 +8,7 @@ function TetrisGame(rows, cols, options) {
 	
 	this.tetronimoes = [];
 	this.linesCount = 0;
-	this.level = 1;
+	this.level = 0;
 	
 	this.data = [];
 	for (var row = 0; row < rows; row++) {
@@ -72,7 +72,7 @@ TetrisGame.prototype = {
 	_newTetronimo: function(index) {
 		var col = Math.floor(this.data[0].length / 2) - 1;
 		this.tetronimoes[index] = TetrisGame.Tetronimo.random(0, col);
-		this.trigger("change");
+		this.trigger("change:tetronimo", index);
 		
 		if (this._doesTetronimoCollide(index)) {
 			this._gameOver();
@@ -119,7 +119,7 @@ TetrisGame.prototype = {
 			_.extend(this.tetronimoes[index], tetronimo);
 			if (typeof collisionFunction !== "undefined") collisionFunction.call(this, index);
 		} else {
-			this.trigger("change");
+			this.trigger("change:tetronimo", index);
 		}
 	},
 	
@@ -132,6 +132,7 @@ TetrisGame.prototype = {
 		}
 		this._removeCompleteLines();
 		this._newTetronimo(index);
+		this.trigger("change:data");
 	},
 	
 	_removeCompleteLines: function() {
