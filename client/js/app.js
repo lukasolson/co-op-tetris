@@ -18,7 +18,6 @@
 			moveIntervalMillis: 75,
 			cellSize: Math.floor(height / 20),
 			colors: [
-				"#404040",
 				"#FFFF80",
 				"#FF80FF",
 				"#80FFFF",

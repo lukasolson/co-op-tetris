@@ -127,7 +127,9 @@ TetrisGame.prototype = {
 		var tetronimo = this.tetronimoes[index];
 		for (var row = 0; row < tetronimo.data.length; row++) {
 			for (var col = 0; col < tetronimo.data[row].length; col++) {
-				this.data[row + tetronimo.row][col + tetronimo.col] || (this.data[row + tetronimo.row][col + tetronimo.col] = tetronimo.data[row][col]);
+				if (tetronimo.data[row][col]) {
+					this.data[row + tetronimo.row][col + tetronimo.col] = index + 1;
+				}
 			}
 		}
 		this._removeCompleteLines();
@@ -185,25 +187,34 @@ TetrisGame.Tetronimo = function Tetronimo(row, col, data) {
 
 TetrisGame.Tetronimo.templates = [
 	[
+		[1]
+	], [
+		[1, 1]
+	], [
+		[1, 1, 1]
+	], [
+		[1, 1],
+		[1, 0]
+	], [
 		[1, 1, 1, 1]
 	], [
-		[2, 0, 0],
-		[2, 2, 2]
+		[1, 0, 0],
+		[1, 1, 1]
 	], [
-		[0, 0, 3],
-		[3, 3, 3]
+		[0, 0, 1],
+		[1, 1, 1]
 	], [
-		[4, 4],
-		[4, 4]
+		[1, 1],
+		[1, 1]
 	], [
-		[5, 5, 0],
-		[0, 5, 5]
+		[1, 1, 0],
+		[0, 1, 1]
 	], [
-		[0, 6, 6],
-		[6, 6, 0]
+		[0, 1, 1],
+		[1, 1, 0]
 	], [
-		[0, 7, 0],
-		[7, 7, 7]
+		[0, 1, 0],
+		[1, 1, 1]
 	]
 ];
 

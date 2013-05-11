@@ -37,7 +37,7 @@ TetrisCanvas.prototype = {
 		for (var row = 0; row < this.tetrisGame.data.length; row++) {
 			for (var col = 0; col < this.tetrisGame.data[row].length; col++) {
 				if (this.tetrisGame.data[row][col]) {
-					this._drawCell(row, col, this.options.colors[this.tetrisGame.data[row][col]]);
+					this._drawCell(row, col, this.options.colors[this.tetrisGame.data[row][col] - 1]);
 				}
 			}
 		}
@@ -55,14 +55,17 @@ TetrisCanvas.prototype = {
 	
 	_drawTetronimoes: function() {
 		for (var i = 0; i < this.tetrisGame.tetronimoes.length; i++) {
-			var tetronimo = this.tetrisGame.tetronimoes[i];
-			for (var row = 0; row < tetronimo.data.length; row++) {
-				for (var col = 0; col < tetronimo.data[row].length; col++) {
-					if (tetronimo.data[row][col]) {
-						var color = this.options.colors[0];
-						if (i === this.tetronimoIndex) color = this.options.colors[tetronimo.data[row][col]];
-						this._drawCell(tetronimo.row + row, tetronimo.col + col, color);
-					}
+			if (i !== this.tetronimoIndex) this._drawTetronimo(i);
+		}
+		this._drawTetronimo(this.tetronimoIndex); // Draw ours last so it's not hidden behind other players
+	},
+	
+	_drawTetronimo: function(index) {
+		var tetronimo = this.tetrisGame.tetronimoes[index];
+		for (var row = 0; row < tetronimo.data.length; row++) {
+			for (var col = 0; col < tetronimo.data[row].length; col++) {
+				if (tetronimo.data[row][col]) {
+					this._drawCell(tetronimo.row + row, tetronimo.col + col, this.options.colors[index]);
 				}
 			}
 		}
