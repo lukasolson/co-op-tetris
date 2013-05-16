@@ -1,4 +1,4 @@
-(function($) {
+(function ($) {
 	var $canvas = $("#tetris-canvas"),
 		height = $canvas.height(),
 		$linesCount = $("#lines-count"),
@@ -13,27 +13,20 @@
 	var socket = io.connect("http://localhost:1111"),
 		tetrisCanvas = null;
 		
-	socket.on("init", function (tetrisGame) {
-		tetrisCanvas = new TetrisCanvas($canvas[0], tetrisGame, {
+	socket.on("init", function (data) {
+		tetrisCanvas = new TetrisCanvas($canvas[0], data.tetrisGame, data.id, {
 			moveIntervalMillis: 75,
 			cellSize: Math.floor(height / 20),
-			colors: [
-				"#FFFF80",
-				"#FF80FF",
-				"#80FFFF",
-				"#FF8080",
-				"#80FF80",
-				"#8080FF",
-				"#FF8040"
-			]
+			colorGeneratorFunction: function (id) {
+				return "rgb(" + (id.charCodeAt(0) * 2) + ", " + (id.charCodeAt(1) * 2) + ", " + (id.charCodeAt(2) * 2) + ")";
+			}
 		});
-		tetrisCanvas.tetronimoIndex = tetrisGame.tetronimoes.length - 1;
-		tetrisCanvas.on("all", function(event) {
+		tetrisCanvas.on("all", function (event) {
 			socket.send(event);
 		});
 	});
 	
-	socket.on("change:data", function(tetrisGame) {
+	socket.on("change:data", function (tetrisGame) {
 		if (tetrisCanvas === null) return;
 		
 		tetrisCanvas.tetrisGame = tetrisGame;
@@ -41,18 +34,17 @@
 		
 		$linesCount.html(tetrisGame.linesCount);
 		$level.html(tetrisGame.level);
+		$playersCount.html(tetrisGame.tetronimoesCount);
 	});
 	
-	socket.on("change:tetronimo", function(data) {
+	socket.on("change:tetronimo", function (data) {
 		if (tetrisCanvas === null) return;
 		
-		tetrisCanvas.tetrisGame.tetronimoes[data.index] = data.tetronimo;
+		tetrisCanvas.tetrisGame.tetronimoes[data.id] = data.tetronimo;
 		window.requestAnimationFrame(tetrisCanvas.draw);
-		
-		$playersCount.html(tetrisCanvas.tetrisGame.tetronimoes.length);
 	});
 	
-	socket.on("game-over", function() {
+	socket.on("game-over", function () {
 		tetrisCanvas = null;
 	});
 })(jQuery);

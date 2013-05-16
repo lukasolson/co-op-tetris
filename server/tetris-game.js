@@ -6,62 +6,73 @@ function TetrisGame(rows, cols, options) {
 	
 	this.options = options;
 	
-	this.tetronimoes = [];
-	this.linesCount = 0;
-	this.level = 0;
-	
-	this.data = [];
+	this._tetronimoes = {};
+	this._tetronimoesCount = 0;
+	this._linesCount = 0;
+	this._level = 0;
+	this._data = [];
 	for (var row = 0; row < rows; row++) {
-		this.data.push(this._getEmptyLine(cols));
+		this._data.push(this._getEmptyLine(cols));
 	}
 	
 	this._setFallInterval(1000);
 }
 
 TetrisGame.prototype = {
-	toJSON: function() {
+	toJSON: function () {
 		return {
-			data: this.data,
-			tetronimoes: this.tetronimoes,
-			linesCount: this.linesCount,
-			level: this.level
+			data: this._data,
+			tetronimoes: this._tetronimoes,
+			tetronimoesCount: this._tetronimoesCount,
+			linesCount: this._linesCount,
+			level: this._level
 		};
 	},
 	
-	addTetronimo: function() {
-		this.tetronimoes.push({});
-		this._newTetronimo(this.tetronimoes.length - 1);
+	addTetronimo: function (id) {
+		this._tetronimoes[id] = {};
+		this._tetronimoesCount++;
+		this._newTetronimo(id);
+		
+		this.trigger("change:data");
 	},
 	
-	moveTetronimoLeft: function(index) {
-		this._modifyTetronimo(index, this.tetronimoes[index].moveLeft);
+	removeTetronimo: function (id) {
+		delete this._tetronimoes[id];
+		this._tetronimoesCount--;
+		
+		this.trigger("change:data");
 	},
 	
-	moveTetronimoRight: function(index) {
-		this._modifyTetronimo(index, this.tetronimoes[index].moveRight);
+	moveTetronimoLeft: function (id) {
+		this._modifyTetronimo(id, this._tetronimoes[id].moveLeft);
 	},
 	
-	moveTetronimoDown: function(index) {
-		this._modifyTetronimo(index, this.tetronimoes[index].moveDown, this._placeTetronimo);
+	moveTetronimoRight: function (id) {
+		this._modifyTetronimo(id, this._tetronimoes[id].moveRight);
 	},
 	
-	rotateTetronimoClockwise: function(index) {
-		this._modifyTetronimo(index, this.tetronimoes[index].rotateClockwise);
+	moveTetronimoDown: function (id) {
+		this._modifyTetronimo(id, this._tetronimoes[id].moveDown, this._placeTetronimo);
 	},
 	
-	rotateTetronimoCounterClockwise: function(index) {
-		this._modifyTetronimo(index, this.tetronimoes[index].rotateCounterClockwise);
+	rotateTetronimoClockwise: function (id) {
+		this._modifyTetronimo(id, this._tetronimoes[id].rotateClockwise);
 	},
 	
-	dropTetronimo: function(index) {
+	rotateTetronimoCounterClockwise: function (id) {
+		this._modifyTetronimo(id, this._tetronimoes[id].rotateCounterClockwise);
+	},
+	
+	dropTetronimo: function (id) {
 		// Move the tetronimo downwards until it hits and another tetronimo is created
-		var tetronimo = this.tetronimoes[index];
-		while (tetronimo === this.tetronimoes[index]) {
-			this.moveTetronimoDown(index);
+		var tetronimo = this._tetronimoes[id];
+		while (tetronimo === this._tetronimoes[id]) {
+			this.moveTetronimoDown(id);
 		}
 	},
 	
-	_getEmptyLine: function(cols) {
+	_getEmptyLine: function (cols) {
 		var line = [];
 		for (var col = 0; col < cols; col++) {
 			line.push(0);
@@ -69,18 +80,18 @@ TetrisGame.prototype = {
 		return line;
 	},
 	
-	_newTetronimo: function(index) {
-		var col = Math.floor(this.data[0].length / 2) - 1;
-		this.tetronimoes[index] = TetrisGame.Tetronimo.random(0, col);
-		this.trigger("change:tetronimo", index);
+	_newTetronimo: function (id) {
+		var col = Math.floor(this._data[0].length / 2) - 1;
+		this._tetronimoes[id] = TetrisGame.Tetronimo.random(0, col);
+		this.trigger("change:tetronimo", id);
 		
-		if (this._doesTetronimoCollide(index)) {
+		if (this._doesTetronimoCollide(id)) {
 			this._gameOver();
 		}
 	},
 	
-	_doesTetronimoCollide: function(index) {
-		var tetronimo = this.tetronimoes[index];
+	_doesTetronimoCollide: function (id) {
+		var tetronimo = this._tetronimoes[id];
 		for (var row = 0; row < tetronimo.data.length; row++) {
 			for (var col = 0; col < tetronimo.data[row].length; col++) {
 				if (tetronimo.data[row][col] && this._isCellOccupied(
@@ -93,84 +104,84 @@ TetrisGame.prototype = {
 		return false;
 	},
 	
-	_isCellOccupied: function(row, col) {
-		return typeof this.data[row] === "undefined" // Above/below the boundaries
-			|| typeof this.data[row][col] === "undefined" // To the left/right of the boundaries
-			|| this.data[row][col] !== 0; // The cell is occupied
+	_isCellOccupied: function (row, col) {
+		return typeof this._data[row] === "undefined" // Above/below the boundaries
+			|| typeof this._data[row][col] === "undefined" // To the left/right of the boundaries
+			|| this._data[row][col] !== 0; // The cell is occupied
 	},
 	
-	_gameOver: function() {
+	_gameOver: function () {
 		clearInterval(this._fallInterval);
 		this.trigger("game-over");
 		this.off();
 	},
 	
-	_setFallInterval: function(millis) {
+	_setFallInterval: function (millis) {
 		this._fallIntervalMillis = millis || this._fallIntervalMillis;
 		if (this._fallInterval) clearInterval(this._fallInterval);
 		this._fallInterval = setInterval(this._moveTetronimoesDown, this._fallIntervalMillis);
 	},
 	
-	_modifyTetronimo: function(index, modificationFunction, collisionFunction) {
-		var tetronimo = _.clone(this.tetronimoes[index]);
+	_modifyTetronimo: function (id, modificationFunction, collisionFunction) {
+		var tetronimo = _.clone(this._tetronimoes[id]);
 		
-		modificationFunction.call(this.tetronimoes[index]);
-		if (this._doesTetronimoCollide(index)) {
-			_.extend(this.tetronimoes[index], tetronimo);
-			if (typeof collisionFunction !== "undefined") collisionFunction.call(this, index);
+		modificationFunction.call(this._tetronimoes[id]);
+		if (this._doesTetronimoCollide(id)) {
+			_.extend(this._tetronimoes[id], tetronimo);
+			if (typeof collisionFunction !== "undefined") collisionFunction.call(this, id);
 		} else {
-			this.trigger("change:tetronimo", index);
+			this.trigger("change:tetronimo", id);
 		}
 	},
 	
-	_placeTetronimo: function(index) {
-		var tetronimo = this.tetronimoes[index];
+	_placeTetronimo: function (id) {
+		var tetronimo = this._tetronimoes[id];
 		for (var row = 0; row < tetronimo.data.length; row++) {
 			for (var col = 0; col < tetronimo.data[row].length; col++) {
 				if (tetronimo.data[row][col]) {
-					this.data[row + tetronimo.row][col + tetronimo.col] = index + 1;
+					this._data[row + tetronimo.row][col + tetronimo.col] = id;
 				}
 			}
 		}
 		this._removeCompleteLines();
-		this._newTetronimo(index);
+		this._newTetronimo(id);
 		this.trigger("change:data");
 	},
 	
-	_removeCompleteLines: function() {
-		var row = this.data.length;
+	_removeCompleteLines: function () {
+		var row = this._data.length;
 		while (--row >= 0) {
 			if (this._isCompleteLine(row)) {
-				this.data.splice(row, 1);
-				this.data.unshift(this._getEmptyLine(this.data[0].length));
+				this._data.splice(row, 1);
+				this._data.unshift(this._getEmptyLine(this._data[0].length));
 				this._incrementLinesCount();
 				row++;
 			}
 		}
 	},
 	
-	_isCompleteLine: function(row) {
-		for (var col = 0; col < this.data[row].length; col++) {
+	_isCompleteLine: function (row) {
+		for (var col = 0; col < this._data[row].length; col++) {
 			if (!this._isCellOccupied(row, col)) return false;
 		}
 		return true;
 	},
 	
-	_incrementLinesCount: function() {
-		this.linesCount++;
-		if (this.linesCount % this.options.levelLinesCount === 0) {
+	_incrementLinesCount: function () {
+		this._linesCount++;
+		if (this._linesCount % this.options.levelLinesCount === 0) {
 			this._levelUp();
 		}
 	},
 	
-	_levelUp: function() {
-		this.level++;
+	_levelUp: function () {
+		this._level++;
 		this._setFallInterval(this._fallIntervalMillis * this.options.levelFallIntervalMultiplier);
 	},
 	
-	_moveTetronimoesDown: function() {
-		for (var i = 0; i < this.tetronimoes.length; i++) {
-			this.moveTetronimoDown(i);
+	_moveTetronimoesDown: function () {
+		for (var id in this._tetronimoes) {
+			this.moveTetronimoDown(id);
 		}
 	}
 };
@@ -218,34 +229,34 @@ TetrisGame.Tetronimo.templates = [
 	]
 ];
 
-TetrisGame.Tetronimo.random = function(row, col) {
+TetrisGame.Tetronimo.random = function (row, col) {
 	return new TetrisGame.Tetronimo(row, col, TetrisGame.Tetronimo.templates[
 		Math.floor(Math.random() * TetrisGame.Tetronimo.templates.length)
 	]);
 };
 
 TetrisGame.Tetronimo.prototype = {
-	moveLeft: function() {
+	moveLeft: function () {
 		this.col -= 1;
 	},
 	
-	moveRight: function() {
+	moveRight: function () {
 		this.col += 1;
 	},
 	
-	moveDown: function() {
+	moveDown: function () {
 		this.row += 1;
 	},
 	
-	rotateClockwise: function() {
+	rotateClockwise: function () {
 		this._rotate(1);
 	},
 	
-	rotateCounterClockwise: function() {
+	rotateCounterClockwise: function () {
 		this._rotate(-1);
 	},
 	
-	_rotate: function(x) {
+	_rotate: function (x) {
 		var data = [];
 		for (var col = Math.max(0, -x * (1 - this.data[0].length)); col >= 0 && col < this.data[0].length; col -= x) {
 			data.push([]);

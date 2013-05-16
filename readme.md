@@ -8,7 +8,7 @@ Play Tetris collaboratively with your friends!
 
 TODO:
 
-1. Set a cookie so refreshing doesn't create a new player
+1. Show next tetronimo
 1. Grow the board when a new player enters
 1. Only one event broadcast when a tetronimo is dropped
 1. Only broadcast changes, rather than entire board
