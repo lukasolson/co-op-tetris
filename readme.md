@@ -9,6 +9,7 @@ Play Tetris collaboratively with your friends!
 TODO:
 
 1. Show next tetronimo
+1. Show shadow of where tetronimo will drop
 1. Grow the board when a new player enters
 1. Only one event broadcast when a tetronimo is dropped
 1. Only broadcast changes, rather than entire board
