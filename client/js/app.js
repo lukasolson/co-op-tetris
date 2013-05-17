@@ -46,5 +46,6 @@
 	
 	socket.on("game-over", function () {
 		tetrisCanvas = null;
+		socket.disconnect();
 	});
 })(jQuery);

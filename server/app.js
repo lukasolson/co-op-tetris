@@ -4,6 +4,11 @@ var TetrisGame = require("./tetris-game"),
 
 app.listen(1111);
 
+io.enable("browser client minification"); 
+io.enable("browser client etag");
+io.enable("browser client gzip");
+io.set("log level", 1);
+
 var tetrisGame = null;
 
 function newGame() {
@@ -45,6 +50,6 @@ io.sockets.on("connection", function (socket) {
 	
 	socket.on("disconnect", function () {
 		console.log("Player disconnected: " + socket.id);
-		tetrisGame.removeTetronimo(socket.id);
+		local.removeTetronimo(socket.id);
 	});
 });
