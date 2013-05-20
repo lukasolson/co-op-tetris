@@ -21,6 +21,9 @@
 				return "rgb(" + (id.charCodeAt(0) * 2) + ", " + (id.charCodeAt(1) * 2) + ", " + (id.charCodeAt(2) * 2) + ")";
 			}
 		});
+	
+		window.onkeydown = tetrisCanvas.handleKeyDown;
+		
 		tetrisCanvas.on("all", function (event) {
 			socket.send(event);
 		});
@@ -34,13 +37,13 @@
 		
 		$linesCount.html(tetrisGame.linesCount);
 		$level.html(tetrisGame.level);
-		$playersCount.html(tetrisGame.tetronimoesCount);
+		$playersCount.html(tetrisGame.tetrominoesCount);
 	});
 	
-	socket.on("change:tetronimo", function (data) {
+	socket.on("change:tetromino", function (data) {
 		if (tetrisCanvas === null) return;
 		
-		tetrisCanvas.tetrisGame.tetronimoes[data.id] = data.tetronimo;
+		tetrisCanvas.tetrisGame.tetrominoes[data.id] = data.tetromino;
 		window.requestAnimationFrame(tetrisCanvas.draw);
 	});
 	

@@ -9,6 +9,8 @@ Play Tetris collaboratively with your friends!
 
 TODO:
 
+1. Support for touch devices/mouse
+1. Support for tall screens
 1. Show next tetronimo
 1. Show shadow of where tetronimo will drop
 1. Grow the board when a new player enters

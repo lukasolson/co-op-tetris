@@ -23,8 +23,8 @@ function newGame() {
 		io.sockets.json.emit("change:data", tetrisGame.toJSON());
 	});
 	
-	tetrisGame.on("change:tetronimo", function (id) {
-		io.sockets.json.emit("change:tetronimo", {id: id, tetronimo: tetrisGame._tetronimoes[id]});
+	tetrisGame.on("change:tetromino", function (id) {
+		io.sockets.json.emit("change:tetromino", {id: id, tetromino: tetrisGame._tetrominoes[id]});
 	});
 	
 	tetrisGame.on("game-over", function () {
@@ -39,7 +39,7 @@ io.sockets.on("connection", function (socket) {
 	console.log("Player connected: " + socket.id);
 	
 	socket.emit("init", {id: socket.id, tetrisGame: tetrisGame.toJSON()});
-	tetrisGame.addTetronimo(socket.id);
+	tetrisGame.addTetromino(socket.id);
 	
 	var local = tetrisGame;
 	socket.on("message", function (message) {
@@ -50,6 +50,6 @@ io.sockets.on("connection", function (socket) {
 	
 	socket.on("disconnect", function () {
 		console.log("Player disconnected: " + socket.id);
-		local.removeTetronimo(socket.id);
+		local.removeTetromino(socket.id);
 	});
 });

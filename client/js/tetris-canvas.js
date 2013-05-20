@@ -1,29 +1,27 @@
-function TetrisCanvas(canvas, tetrisGame, tetronimoId, options) {
+function TetrisCanvas(canvas, tetrisGame, tetrominoId, options) {
 	_.bindAll(this);
 	
 	this.canvas = canvas;
 	this.context = canvas.getContext("2d");
 	this.tetrisGame = tetrisGame;
-	this.tetronimoId = tetronimoId;
+	this.tetrominoId = tetrominoId;
 	this.options = options;
 	this.colors = {};
-	
-	window.onkeydown = this.handleKeyDown;
 }
 
 TetrisCanvas.keyEventMap = {
-	13: "dropTetronimo",            // Enter
-	37: "moveTetronimoLeft",        // Left
-	38: "rotateTetronimoClockwise", // Up
-	39: "moveTetronimoRight",       // Right
-	40: "moveTetronimoDown"         // Down
+	13: "dropTetromino",            // Enter
+	37: "moveTetrominoLeft",        // Left
+	38: "rotateTetrominoClockwise", // Up
+	39: "moveTetrominoRight",       // Right
+	40: "moveTetrominoDown"         // Down
 };
 
 TetrisCanvas.prototype = {
 	draw: function () {
 		this._clear();
 		this._drawGrid();
-		this._drawTetronimoes();
+		this._drawTetrominoes();
 	},
 	
 	handleKeyDown: function (event) {
@@ -45,8 +43,8 @@ TetrisCanvas.prototype = {
 		}
 	},
 	
-	_drawCell: function (row, col, tetronimoId) {
-		var color = this.colors[tetronimoId] || (this.colors[tetronimoId] = this.options.colorGeneratorFunction(tetronimoId));
+	_drawCell: function (row, col, tetrominoId) {
+		var color = this.colors[tetrominoId] || (this.colors[tetrominoId] = this.options.colorGeneratorFunction(tetrominoId));
 		this.context.fillStyle = color;
 		this.context.fillRect(
 			col * this.options.cellSize,
@@ -56,20 +54,20 @@ TetrisCanvas.prototype = {
 		);
 	},
 	
-	_drawTetronimoes: function () {
+	_drawTetrominoes: function () {
 		var i = 0;
-		for (var id in this.tetrisGame.tetronimoes) {
-			if (id !== this.tetronimoId) this._drawTetronimo(id);
+		for (var id in this.tetrisGame.tetrominoes) {
+			if (id !== this.tetrominoId) this._drawTetromino(id);
 		}
-		this._drawTetronimo(this.tetronimoId); // Draw ours last so it's not hidden behind other players
+		this._drawTetromino(this.tetrominoId); // Draw ours last so it's not hidden behind other players
 	},
 	
-	_drawTetronimo: function (id) {
-		var tetronimo = this.tetrisGame.tetronimoes[id];
-		for (var row = 0; row < tetronimo.data.length; row++) {
-			for (var col = 0; col < tetronimo.data[row].length; col++) {
-				if (tetronimo.data[row][col]) {
-					this._drawCell(tetronimo.row + row, tetronimo.col + col, id);
+	_drawTetromino: function (id) {
+		var tetromino = this.tetrisGame.tetrominoes[id];
+		for (var row = 0; row < tetromino.data.length; row++) {
+			for (var col = 0; col < tetromino.data[row].length; col++) {
+				if (tetromino.data[row][col]) {
+					this._drawCell(tetromino.row + row, tetromino.col + col, id);
 				}
 			}
 		}

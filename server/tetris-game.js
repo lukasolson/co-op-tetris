@@ -6,8 +6,8 @@ function TetrisGame(rows, cols, options) {
 	
 	this.options = options;
 	
-	this._tetronimoes = {};
-	this._tetronimoesCount = 0;
+	this._tetrominoes = {};
+	this._tetrominoesCount = 0;
 	this._linesCount = 0;
 	this._level = 0;
 	this._data = [];
@@ -22,53 +22,53 @@ TetrisGame.prototype = {
 	toJSON: function () {
 		return {
 			data: this._data,
-			tetronimoes: this._tetronimoes,
-			tetronimoesCount: this._tetronimoesCount,
+			tetrominoes: this._tetrominoes,
+			tetrominoesCount: this._tetrominoesCount,
 			linesCount: this._linesCount,
 			level: this._level
 		};
 	},
 	
-	addTetronimo: function (id) {
-		this._tetronimoes[id] = {};
-		this._tetronimoesCount++;
-		this._newTetronimo(id);
+	addTetromino: function (id) {
+		this._tetrominoes[id] = {};
+		this._tetrominoesCount++;
+		this._newTetromino(id);
 		
 		this.trigger("change:data");
 	},
 	
-	removeTetronimo: function (id) {
-		delete this._tetronimoes[id];
-		this._tetronimoesCount--;
+	removeTetromino: function (id) {
+		delete this._tetrominoes[id];
+		this._tetrominoesCount--;
 		
 		this.trigger("change:data");
 	},
 	
-	moveTetronimoLeft: function (id) {
-		this._modifyTetronimo(id, this._tetronimoes[id].moveLeft);
+	moveTetrominoLeft: function (id) {
+		this._modifyTetromino(id, this._tetrominoes[id].moveLeft);
 	},
 	
-	moveTetronimoRight: function (id) {
-		this._modifyTetronimo(id, this._tetronimoes[id].moveRight);
+	moveTetrominoRight: function (id) {
+		this._modifyTetromino(id, this._tetrominoes[id].moveRight);
 	},
 	
-	moveTetronimoDown: function (id) {
-		this._modifyTetronimo(id, this._tetronimoes[id].moveDown, this._placeTetronimo);
+	moveTetrominoDown: function (id) {
+		this._modifyTetromino(id, this._tetrominoes[id].moveDown, this._placeTetromino);
 	},
 	
-	rotateTetronimoClockwise: function (id) {
-		this._modifyTetronimo(id, this._tetronimoes[id].rotateClockwise);
+	rotateTetrominoClockwise: function (id) {
+		this._modifyTetromino(id, this._tetrominoes[id].rotateClockwise);
 	},
 	
-	rotateTetronimoCounterClockwise: function (id) {
-		this._modifyTetronimo(id, this._tetronimoes[id].rotateCounterClockwise);
+	rotateTetrominoCounterClockwise: function (id) {
+		this._modifyTetromino(id, this._tetrominoes[id].rotateCounterClockwise);
 	},
 	
-	dropTetronimo: function (id) {
-		// Move the tetronimo downwards until it hits and another tetronimo is created
-		var tetronimo = this._tetronimoes[id];
-		while (tetronimo === this._tetronimoes[id]) {
-			this.moveTetronimoDown(id);
+	dropTetromino: function (id) {
+		// Move the tetromino downwards until it hits and another tetromino is created
+		var tetromino = this._tetrominoes[id];
+		while (tetromino === this._tetrominoes[id]) {
+			this.moveTetrominoDown(id);
 		}
 	},
 	
@@ -80,23 +80,23 @@ TetrisGame.prototype = {
 		return line;
 	},
 	
-	_newTetronimo: function (id) {
+	_newTetromino: function (id) {
 		var col = Math.floor(this._data[0].length / 2) - 1;
-		this._tetronimoes[id] = TetrisGame.Tetronimo.random(0, col);
-		this.trigger("change:tetronimo", id);
+		this._tetrominoes[id] = TetrisGame.Tetromino.random(0, col);
+		this.trigger("change:tetromino", id);
 		
-		if (this._doesTetronimoCollide(id)) {
+		if (this._doesTetrominoCollide(id)) {
 			this._gameOver();
 		}
 	},
 	
-	_doesTetronimoCollide: function (id) {
-		var tetronimo = this._tetronimoes[id];
-		for (var row = 0; row < tetronimo.data.length; row++) {
-			for (var col = 0; col < tetronimo.data[row].length; col++) {
-				if (tetronimo.data[row][col] && this._isCellOccupied(
-					row + tetronimo.row,
-					col + tetronimo.col
+	_doesTetrominoCollide: function (id) {
+		var tetromino = this._tetrominoes[id];
+		for (var row = 0; row < tetromino.data.length; row++) {
+			for (var col = 0; col < tetromino.data[row].length; col++) {
+				if (tetromino.data[row][col] && this._isCellOccupied(
+					row + tetromino.row,
+					col + tetromino.col
 				)) return true;
 			}
 		}
@@ -119,32 +119,32 @@ TetrisGame.prototype = {
 	_setFallInterval: function (millis) {
 		this._fallIntervalMillis = millis || this._fallIntervalMillis;
 		if (this._fallInterval) clearInterval(this._fallInterval);
-		this._fallInterval = setInterval(this._moveTetronimoesDown, this._fallIntervalMillis);
+		this._fallInterval = setInterval(this._moveTetrominoesDown, this._fallIntervalMillis);
 	},
 	
-	_modifyTetronimo: function (id, modificationFunction, collisionFunction) {
-		var tetronimo = _.clone(this._tetronimoes[id]);
+	_modifyTetromino: function (id, modificationFunction, collisionFunction) {
+		var tetromino = _.clone(this._tetrominoes[id]);
 		
-		modificationFunction.call(this._tetronimoes[id]);
-		if (this._doesTetronimoCollide(id)) {
-			_.extend(this._tetronimoes[id], tetronimo);
+		modificationFunction.call(this._tetrominoes[id]);
+		if (this._doesTetrominoCollide(id)) {
+			_.extend(this._tetrominoes[id], tetromino);
 			if (typeof collisionFunction !== "undefined") collisionFunction.call(this, id);
 		} else {
-			this.trigger("change:tetronimo", id);
+			this.trigger("change:tetromino", id);
 		}
 	},
 	
-	_placeTetronimo: function (id) {
-		var tetronimo = this._tetronimoes[id];
-		for (var row = 0; row < tetronimo.data.length; row++) {
-			for (var col = 0; col < tetronimo.data[row].length; col++) {
-				if (tetronimo.data[row][col]) {
-					this._data[row + tetronimo.row][col + tetronimo.col] = id;
+	_placeTetromino: function (id) {
+		var tetromino = this._tetrominoes[id];
+		for (var row = 0; row < tetromino.data.length; row++) {
+			for (var col = 0; col < tetromino.data[row].length; col++) {
+				if (tetromino.data[row][col]) {
+					this._data[row + tetromino.row][col + tetromino.col] = id;
 				}
 			}
 		}
 		this._removeCompleteLines();
-		this._newTetronimo(id);
+		this._newTetromino(id);
 		this.trigger("change:data");
 	},
 	
@@ -179,16 +179,16 @@ TetrisGame.prototype = {
 		this._setFallInterval(this._fallIntervalMillis * this.options.levelFallIntervalMultiplier);
 	},
 	
-	_moveTetronimoesDown: function () {
-		for (var id in this._tetronimoes) {
-			this.moveTetronimoDown(id);
+	_moveTetrominoesDown: function () {
+		for (var id in this._tetrominoes) {
+			this.moveTetrominoDown(id);
 		}
 	}
 };
 
 _.extend(TetrisGame.prototype, Events);
 
-TetrisGame.Tetronimo = function Tetronimo(row, col, data) {
+TetrisGame.Tetromino = function Tetromino(row, col, data) {
 	_.bindAll(this);
 	
 	this.row = row;
@@ -196,7 +196,7 @@ TetrisGame.Tetronimo = function Tetronimo(row, col, data) {
 	this.data = data;
 }
 
-TetrisGame.Tetronimo.templates = [
+TetrisGame.Tetromino.templates = [
 	[
 		[1]
 	], [
@@ -229,13 +229,13 @@ TetrisGame.Tetronimo.templates = [
 	]
 ];
 
-TetrisGame.Tetronimo.random = function (row, col) {
-	return new TetrisGame.Tetronimo(row, col, TetrisGame.Tetronimo.templates[
-		Math.floor(Math.random() * TetrisGame.Tetronimo.templates.length)
+TetrisGame.Tetromino.random = function (row, col) {
+	return new TetrisGame.Tetromino(row, col, TetrisGame.Tetromino.templates[
+		Math.floor(Math.random() * TetrisGame.Tetromino.templates.length)
 	]);
 };
 
-TetrisGame.Tetronimo.prototype = {
+TetrisGame.Tetromino.prototype = {
 	moveLeft: function () {
 		this.col -= 1;
 	},
