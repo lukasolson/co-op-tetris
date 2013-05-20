@@ -50,5 +50,6 @@
 	socket.on("game-over", function () {
 		tetrisCanvas = null;
 		socket.disconnect();
+		window.location.reload();
 	});
 })(jQuery);
