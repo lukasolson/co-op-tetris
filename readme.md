@@ -9,11 +9,12 @@ Play Tetris collaboratively with your friends!
 
 TODO:
 
+1. Show high scores
 1. Support for touch devices/mouse
 1. Support for tall screens
-1. Show next tetronimo
-1. Show shadow of where tetronimo will drop
+1. Show next tetromino
+1. Show shadow of where tetromino will drop
 1. Grow the board when a new player enters
-1. Only broadcast one event when a tetronimo is dropped
+1. Only broadcast one event when a tetromino is dropped
 1. Game over animation
 1. Chat room
