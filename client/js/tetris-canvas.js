@@ -1,5 +1,5 @@
 function TetrisCanvas(canvas, tetrisGame, tetrominoId, options) {
-	_.bindAll(this);
+	_.bindAll(this, "draw", "handleKeyDown");
 	
 	this.canvas = canvas;
 	this.context = canvas.getContext("2d");

@@ -2,8 +2,6 @@ var _ = require("underscore"),
 	Events = require("backbone").Events;
 
 function TetrisGame(rows, cols, options) {
-	_.bindAll(this);
-	
 	this.options = options;
 	
 	this._tetrominoes = {};
@@ -119,7 +117,7 @@ TetrisGame.prototype = {
 	_setFallInterval: function (millis) {
 		this._fallIntervalMillis = millis || this._fallIntervalMillis;
 		if (this._fallInterval) clearInterval(this._fallInterval);
-		this._fallInterval = setInterval(this._moveTetrominoesDown, this._fallIntervalMillis);
+		this._fallInterval = setInterval(_.bind(this._moveTetrominoesDown, this), this._fallIntervalMillis);
 	},
 	
 	_modifyTetromino: function (id, modificationFunction, collisionFunction) {
@@ -189,8 +187,6 @@ TetrisGame.prototype = {
 _.extend(TetrisGame.prototype, Events);
 
 TetrisGame.Tetromino = function Tetromino(row, col, data) {
-	_.bindAll(this);
-	
 	this.row = row;
 	this.col = col;
 	this.data = data;
