@@ -37,9 +37,9 @@ newGame();
 
 io.sockets.on("connection", function (socket) {
 	console.log("Player connected: " + socket.id);
-	
-	socket.emit("init", {id: socket.id, tetrisGame: tetrisGame.toJSON()});
+
 	tetrisGame.addTetromino(socket.id);
+	socket.emit("init", {id: socket.id, tetrisGame: tetrisGame.toJSON()});
 	
 	var local = tetrisGame;
 	socket.on("message", function (message) {
