@@ -261,7 +261,7 @@ TetrisGame.Tetromino.prototype = {
 			}
 		}
 		this.data = data;
-	},
+	}
 };
 
 module.exports = TetrisGame;
