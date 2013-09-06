@@ -11,7 +11,8 @@
 		.css("width", (height / 2) + "px");
 		
 	var socket = io.connect("http://localhost:1111"),
-		tetrisCanvas = null;
+		tetrisCanvas = null,
+		tetrisSolver = null;
 		
 	socket.on("init", function (data) {
 		tetrisCanvas = new TetrisCanvas($canvas[0], data.tetrisGame, data.id, {
@@ -21,23 +22,35 @@
 				return "rgb(" + (id.charCodeAt(0) * 2) + ", " + (id.charCodeAt(1) * 2) + ", " + (id.charCodeAt(2) * 2) + ")";
 			}
 		});
-	
+
 		window.onkeydown = tetrisCanvas.handleKeyDown;
-		
+
 		tetrisCanvas.on("all", function (event) {
 			socket.send(event);
 		});
+
+		tetrisSolver = new TetrisSolver(data.tetrisGame, data.id);
+		$("#controls").one("click", function () {
+			tetrisSolver.isActive = true;
+			tetrisSolver.makeBestMove();
+		});
+		tetrisSolver.on("all", function (event) {
+			if (tetrisSolver.isActive) socket.send(event);
+		});
+		tetrisSolver.makeBestMove();
 	});
 	
 	socket.on("change:data", function (tetrisGame) {
 		if (tetrisCanvas === null) return;
 		
-		tetrisCanvas.tetrisGame = tetrisGame;
+		tetrisCanvas.tetrisGame = tetrisSolver.tetrisGame = tetrisGame;
 		window.requestAnimationFrame(tetrisCanvas.draw);
 		
 		$linesCount.html(tetrisGame.linesCount);
 		$level.html(tetrisGame.level);
 		$playersCount.html(tetrisGame.tetrominoesCount);
+
+		tetrisSolver.makeBestMove();
 	});
 	
 	socket.on("change:tetromino", function (data) {
