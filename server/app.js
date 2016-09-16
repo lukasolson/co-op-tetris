@@ -1,13 +1,8 @@
 var TetrisGame = require("./tetris-game"),
 	app = require("http").createServer(),
-	io = require("socket.io").listen(app);
+	io = require("socket.io")(app);
 
 app.listen(1111);
-
-io.enable("browser client minification"); 
-io.enable("browser client etag");
-io.enable("browser client gzip");
-io.set("log level", 1);
 
 var tetrisGame = null;
 
