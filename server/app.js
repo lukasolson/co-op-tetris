@@ -1,5 +1,28 @@
+var path = require("path");
+var fs = require("fs");
+
 var TetrisGame = require("./tetris-game"),
-	app = require("http").createServer(),
+	app = require("http").createServer(
+		(req, res) => {
+			const url = req.url === '/' ? '/index.html' : req.url;
+			const filePath = path.join(__dirname, '../client', url);
+			const ext = path.extname(filePath);
+			fs.readFile(filePath, (err, content) => {
+				if (err) {
+					res.writeHead(404);
+					res.end(`File not found: ${req.url}`);
+				} else {
+					const contentType = {
+						'.html': 'text/html',
+						'.css': 'text/css',
+						'.js': 'text/javascript',
+						'.png': 'image/png'
+					}[ext] || 'text/plain';
+					res.writeHead(200, { 'Content-Type': contentType });
+					res.end(content);
+				}
+			});
+		}),
 	io = require("socket.io")(app);
 
 app.listen(1111);
