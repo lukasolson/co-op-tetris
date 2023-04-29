@@ -38,11 +38,11 @@ function newGame() {
 	});
 	
 	tetrisGame.on("change:data", function () {
-		io.sockets.json.emit("change:data", tetrisGame.toJSON());
+		io.sockets.emit("change:data", tetrisGame.toJSON());
 	});
 	
 	tetrisGame.on("change:tetromino", function (id) {
-		io.sockets.json.emit("change:tetromino", {id: id, tetromino: tetrisGame._tetrominoes[id]});
+		io.sockets.emit("change:tetromino", {id: id, tetromino: tetrisGame._tetrominoes[id]});
 	});
 	
 	tetrisGame.on("game-over", function () {
