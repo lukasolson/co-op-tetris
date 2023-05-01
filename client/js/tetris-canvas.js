@@ -1,5 +1,5 @@
 function TetrisCanvas(canvas, tetrisGame, tetrominoId, options) {
-	_.bindAll(this, "draw", "handleKeyDown");
+	_.bindAll(this, "draw", "handleKeyDown",  "handleTouchStart", "handleTouchMove", "handleTouchEnd");
 	
 	this.canvas = canvas;
 	this.context = canvas.getContext("2d");
@@ -7,6 +7,12 @@ function TetrisCanvas(canvas, tetrisGame, tetrominoId, options) {
 	this.tetrominoId = tetrominoId;
 	this.options = options;
 	this.colors = {};
+	this.touchStartX = 0;
+	this.touchStartY = 0;
+	this.canvas.addEventListener("touchstart", this.handleTouchStart, false);
+	this.canvas.addEventListener("touchmove", this.handleTouchMove, false);
+	this.canvas.addEventListener("touchend", this.handleTouchEnd, false);
+
 }
 
 TetrisCanvas.keyEventMap = {
@@ -71,7 +77,38 @@ TetrisCanvas.prototype = {
 				}
 			}
 		}
-	}
+	},
+	handleTouchStart: function (event) {
+		this.touchStartX = event.touches[0].clientX;
+		this.touchStartY = event.touches[0].clientY;
+	},
+
+	handleTouchMove: function (event) {
+		event.preventDefault();
+	},
+
+	handleTouchEnd: function (event) {
+		var touchEndX = event.changedTouches[0].clientX;
+		var touchEndY = event.changedTouches[0].clientY;
+		var deltaX = touchEndX - this.touchStartX;
+		var deltaY = touchEndY - this.touchStartY;
+
+		if (Math.abs(deltaX) > Math.abs(deltaY)) {
+			// Horizontal swipe
+			if (deltaX > 0) {
+				this.trigger("moveTetrominoRight");
+			} else {
+				this.trigger("moveTetrominoLeft");
+			}
+		} else {
+			// Vertical swipe
+			if (deltaY > 0) {
+				this.trigger("moveTetrominoDown");
+			} else {
+				this.trigger("rotateTetrominoClockwise");
+			}
+		}
+	},
 };
 
 _.extend(TetrisCanvas.prototype, Backbone.Events);
