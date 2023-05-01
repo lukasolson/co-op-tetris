@@ -5,7 +5,18 @@ Play Tetris collaboratively with your friends!
 1. `cd server`
 1. `npm install`
 1. `npm start`
-1. Open `client/index.html` in a browser
+1. Open [localhost:1111](http://localhost:1111) in a browser
+
+To play with friends remotely, you can forward port 1111 by a service like ``localtunnel``:
+
+```
+npm install -g localtunnel
+npx localtunnel --port 1111
+```
+
+Then you'll get a URL to share for people to join your game.
+
+
 
 TODO:
 
